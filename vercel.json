@@ -1,4 +1,10 @@
 {
+  "build": {
+    "env": {},
+    "commands": {
+      "build": "npm run build"
+    }
+  },
   "builds": [
     {
       "src": "package.json",
