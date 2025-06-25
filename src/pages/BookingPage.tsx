@@ -1,5 +1,6 @@
+// src/pages/BookingPage.tsx
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/Auth.Context";
+import { useAuth } from "../context/AuthContext";
 
 interface Salon {
   id: number;
@@ -20,7 +21,7 @@ interface BookingPayload {
 }
 
 const BookingPage: React.FC = () => {
-  const { accessToken } = useAuth();
+  const { token } = useAuth(); // Use token from context
 
   const [salons, setSalons] = useState<Salon[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -38,7 +39,7 @@ const BookingPage: React.FC = () => {
         setLoading(true);
         const res = await fetch("/api/salons", {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         if (!res.ok) throw new Error("Nepavyko gauti salonų duomenų.");
@@ -50,8 +51,9 @@ const BookingPage: React.FC = () => {
         setLoading(false);
       }
     };
-    if (accessToken) fetchSalons();
-  }, [accessToken]);
+    if (token) fetchSalons();
+    else setError("Reikia prisijungti");
+  }, [token]);
 
   // Fetch services when salon changes
   useEffect(() => {
@@ -64,7 +66,7 @@ const BookingPage: React.FC = () => {
         setLoading(true);
         const res = await fetch(`/api/salons/${selectedSalonId}/services`, {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         if (!res.ok) throw new Error("Nepavyko gauti paslaugų duomenų.");
@@ -76,14 +78,19 @@ const BookingPage: React.FC = () => {
         setLoading(false);
       }
     };
-    if (accessToken) fetchServices();
-  }, [selectedSalonId, accessToken]);
+    if (token) fetchServices();
+  }, [selectedSalonId, token]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccessMessage(null);
 
+    if (!token) {
+      setError("Reikia prisijungti");
+      return;
+    }
+    
     if (!selectedServiceId) {
       setError("Pasirinkite paslaugą.");
       return;
@@ -104,7 +111,7 @@ const BookingPage: React.FC = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -151,7 +158,7 @@ const BookingPage: React.FC = () => {
           value={selectedSalonId ?? ""}
           onChange={(e) => setSelectedSalonId(Number(e.target.value) || null)}
           className="w-full border rounded p-2"
-          disabled={loading}
+          disabled={loading || !token}
           required
         >
           <option value="" disabled>
@@ -173,7 +180,7 @@ const BookingPage: React.FC = () => {
           value={selectedServiceId ?? ""}
           onChange={(e) => setSelectedServiceId(Number(e.target.value) || null)}
           className="w-full border rounded p-2"
-          disabled={!selectedSalonId || loading}
+          disabled={!selectedSalonId || loading || !token}
           required
         >
           <option value="" disabled>
@@ -181,7 +188,7 @@ const BookingPage: React.FC = () => {
           </option>
           {services.map((service) => (
             <option key={service.id} value={service.id}>
-              {service.name} - {service.price.toLocaleString("lt-LT", {
+              {service.name} - {(service.price / 100).toLocaleString("lt-LT", {
                 style: "currency",
                 currency: "EUR",
               })}
@@ -201,14 +208,14 @@ const BookingPage: React.FC = () => {
           onChange={(e) => setAppointmentTime(e.target.value)}
           className="w-full border rounded p-2"
           min={new Date().toISOString().slice(0, 16)} // no past dates
-          disabled={loading}
+          disabled={loading || !token}
           required
         />
 
         <button
           type="submit"
           className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-          disabled={loading}
+          disabled={loading || !token}
         >
           {loading ? "Kraunama..." : "Rezervuoti"}
         </button>

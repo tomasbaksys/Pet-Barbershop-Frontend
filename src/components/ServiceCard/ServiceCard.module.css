@@ -1,0 +1,94 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.placeholderImage {
+  width: 100%;
+  height: 160px;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.price {
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.duration {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* Skeleton loading styles */
+.skeletonImage {
+  width: 100%;
+  height: 160px;
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  animation: pulse 1.5s infinite ease-in-out;
+  margin-bottom: 1rem;
+}
+
+.skeletonText,
+.skeletonTextShort {
+  height: 16px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeletonText {
+  width: 80%;
+  margin-bottom: 0.5rem;
+}
+
+.skeletonTextShort {
+  width: 50%;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #e0e0e0;
+  }
+  50% {
+    background-color: #f0f0f0;
+  }
+  100% {
+    background-color: #e0e0e0;
+  }
+}

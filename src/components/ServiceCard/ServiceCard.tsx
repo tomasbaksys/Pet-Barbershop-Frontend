@@ -4,18 +4,16 @@ import styles from "./ServiceCard.module.css";
 interface ServiceCardProps {
   id: number;
   name: string;
-  price: number; // price in euros, integer or float
+  price: number;
   durationMinutes: number;
   imageUrl?: string;
   isLoading?: boolean;
   onSelect?: (id: number) => void;
 }
 
-// Format price in Euros for Lithuania locale
 const formatPrice = (price: number): string =>
   price.toLocaleString("lt-LT", { style: "currency", currency: "EUR" });
 
-// Format duration string in Lithuanian
 const formatDuration = (minutes: number): string => {
   if (minutes < 60) return `${minutes} min.`;
   const hrs = Math.floor(minutes / 60);
@@ -33,16 +31,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   onSelect,
 }) => {
   const handleSelect = useCallback(() => {
-    if (onSelect) onSelect(id);
+    onSelect?.(id);
   }, [id, onSelect]);
 
   if (isLoading) {
     return (
-      <article
-        className={styles.card}
-        aria-busy="true"
-        aria-label="Kraunama paslauga"
-      >
+      <article className={styles.card} aria-busy="true" aria-label="Kraunama paslauga">
         <div className={styles.skeletonImage} />
         <div className={styles.skeletonText} />
         <div className={styles.skeletonTextShort} />
@@ -56,15 +50,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       role="button"
       tabIndex={0}
       onClick={handleSelect}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
+      onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
+        if (e.key === "Enter" || e.code === "Space") {
           e.preventDefault();
           handleSelect();
         }
       }}
-      aria-label={`Paslauga: ${name}, kaina ${formatPrice(
-        price
-      )}, trukmė ${formatDuration(durationMinutes)}`}
+      aria-label={`Paslauga: ${name}, kaina ${formatPrice(price)}, trukmė ${formatDuration(durationMinutes)}`}
     >
       {imageUrl ? (
         <img src={imageUrl} alt={`${name} paslauga`} className={styles.image} />
@@ -81,3 +73,4 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 };
 
 export default ServiceCard;
+

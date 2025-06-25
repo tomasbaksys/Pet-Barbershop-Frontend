@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/Auth.Context";
+import { useAuth } from "../context/AuthContext";
 
 interface Salon {
   id: number;
@@ -8,7 +8,7 @@ interface Salon {
 }
 
 const HomePage: React.FC = () => {
-  const { accessToken } = useAuth();
+  const { token } = useAuth();
   const [salons, setSalons] = useState<Salon[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,8 +18,8 @@ const HomePage: React.FC = () => {
       try {
         setLoading(true);
         const response = await fetch("/api/salons", {
-          headers: accessToken
-            ? { Authorization: `Bearer ${accessToken}` }
+          headers: token
+            ? { Authorization: `Bearer ${token}` }
             : undefined,
         });
         if (!response.ok) throw new Error("Nepavyko gauti salonų.");
@@ -33,7 +33,7 @@ const HomePage: React.FC = () => {
     };
 
     fetchSalons();
-  }, [accessToken]);
+  }, [token]);
 
   return (
     <main className="container mx-auto px-6 py-12">
@@ -52,7 +52,7 @@ const HomePage: React.FC = () => {
           >
             Rezervuoti paslaugą
           </Link>
-          {!accessToken && (
+          {!token && (
             <Link
               to="/login"
               className="inline-block bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-6 rounded shadow"

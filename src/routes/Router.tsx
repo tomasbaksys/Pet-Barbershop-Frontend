@@ -1,13 +1,14 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
 import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/LoginPage';
 import ProfilePage from '../pages/ProfilePage';
 import SalonPage from '../pages/SalonPage';
 import BookingPage from '../pages/BookingPage';
 
-import { useAuth } from '../context/Auth.Context';
+import { useAuth } from "../context/AuthContext";
 
+// Protects routes from unauthorized access
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user } = useAuth();
   if (!user) {
@@ -16,6 +17,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   return children;
 };
 
+// Application router configuration
 export default function Router() {
   return (
     <BrowserRouter>
@@ -30,7 +32,7 @@ export default function Router() {
             </ProtectedRoute>
           }
         />
-        <Route path="/salon/:id" element={<SalonPage />} />
+        <Route path="/salons/:salonId" element={<SalonPage />} />
         <Route
           path="/booking"
           element={
@@ -44,3 +46,4 @@ export default function Router() {
     </BrowserRouter>
   );
 }
+

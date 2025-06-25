@@ -19,9 +19,7 @@ const SalonCard: React.FC<SalonCardProps> = ({
   onSelect,
 }) => {
   const handleSelect = useCallback(() => {
-    if (onSelect) {
-      onSelect(id);
-    }
+    onSelect?.(id);
   }, [id, onSelect]);
 
   if (isLoading) {
@@ -39,8 +37,8 @@ const SalonCard: React.FC<SalonCardProps> = ({
       role="button"
       tabIndex={0}
       onClick={handleSelect}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
+      onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
+        if (e.key === "Enter" || e.code === "Space") {
           e.preventDefault();
           handleSelect();
         }

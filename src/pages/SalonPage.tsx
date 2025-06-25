@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 interface Service {
   id: number;
   name: string;
-  price: number; // in Euro cents or Euro
+  price: number; // Euros (e.g., 25.99)
   duration_minutes: number;
 }
 
@@ -21,14 +21,18 @@ const SalonPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchSalon() {
+    const fetchSalon = async () => {
       try {
         const response = await fetch(`/api/salons/${salonId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
           },
         });
-        if (!response.ok) throw new Error("Nepavyko gauti salonų informacijos.");
+
+        if (!response.ok) {
+          throw new Error("Nepavyko gauti salonų informacijos.");
+        }
+
         const data = await response.json();
         setSalon(data);
       } catch (err) {
@@ -36,7 +40,8 @@ const SalonPage: React.FC = () => {
       } finally {
         setLoading(false);
       }
-    }
+    };
+
     fetchSalon();
   }, [salonId]);
 
@@ -69,6 +74,7 @@ const SalonPage: React.FC = () => {
                   {service.price.toLocaleString("lt-LT", {
                     style: "currency",
                     currency: "EUR",
+                    minimumFractionDigits: 2,
                   })}
                 </div>
               </li>
@@ -81,3 +87,4 @@ const SalonPage: React.FC = () => {
 };
 
 export default SalonPage;
+
